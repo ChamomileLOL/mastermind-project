@@ -1,6 +1,9 @@
 {
   "version": 2,
-  "rewrites": [
-    { "source": "/(.*)", "destination": "/step2.mjs" }
+  "builds": [
+    { "src": "step2.mjs", "use": "@vercel/node" }
+  ],
+  "routes": [
+    { "src": "/(.*)", "dest": "step2.mjs" }
   ]
 }
