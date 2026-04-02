@@ -50,23 +50,19 @@ app.post('/api/trigger', async (req, res) => {
   }
 });
 
-// 📡 New GET endpoint to read all logged payloads
+// 📡 Dedicated API to get logs for the Frontend
 app.get('/api/logs', async (req, res) => {
   try {
     await client.connect();
     const database = client.db('mastermind_db');
     const logsCollection = database.collection('execution_logs');
 
-    // Fetch all logs from Atlas, sorted by the newest first
+    // Fetch the logs from Atlas, sorted by the newest first
     const logs = await logsCollection.find({}).sort({ timestamp: -1 }).toArray();
-
-    console.log(`📤 Dispatching ${logs.length} logs to requesting client.`);
     
-    // Send the logs back to Thunder Client
+    // Send standard JSON back to the requester
     res.status(200).json(logs);
-
   } catch (error) {
-    console.error("❌ System error reading logs:", error);
     res.status(500).json({ message: "System fault." });
   } finally {
     await client.close();

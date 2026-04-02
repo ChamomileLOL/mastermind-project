@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mastermind Alliance Terminal</title>
+    <style>
+        body {
+            background-color: #0d1117;
+            color: #58a6ff;
+            font-family: 'Courier New', Courier, monospace;
+            padding: 20px;
+        }
+        h1 { color: #ff7b72; border-bottom: 2px solid #21262d; padding-bottom: 10px; }
+        .subtitle { color: #8b949e; font-style: italic; }
+        
+        /* Command Input Styling */
+        .control-panel {
+            background-color: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 6px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        input, select, button {
+            background-color: #0d1117;
+            border: 1px solid #30363d;
+            color: #c9d1d9;
+            padding: 10px;
+            margin: 5px;
+            border-radius: 4px;
+            font-family: inherit;
+        }
+        button {
+            background-color: #238636;
+            color: white;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        button:hover { background-color: #2ea043; }
+
+        /* Terminal Logs Styling */
+        #terminal-log {
+            background-color: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 6px;
+            padding: 15px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .log-entry { border-bottom: 1px solid #21262d; padding: 8px 0; }
+        .key { color: #79c0ff; }
+        .val { color: #a5d6ff; }
+        .status { color: #56d364; font-weight: bold;}
+    </style>
+</head>
+<body>
+
+    <h1>🚨 MASTERMIND ALLIANCE: CENTRAL COMMAND 🚨</h1>
+    <p class="subtitle">Neural Nodes: Alt Cunningham, Arnim Zola, Agent Smith, Poison Ivy</p>
+
+    <div class="control-panel">
+        <h3>Execute New Command</h3>
+        <input type="text" id="execId" placeholder="Execution ID (e.g., EXE-999)">
+        
+        <select id="sourceNode">
+            <option value="Alt Cunningham">Alt Cunningham</option>
+            <option value="Arnim Zola">Arnim Zola</option>
+            <option value="Agent Smith">Agent Smith</option>
+            <option value="Poison Ivy">Poison Ivy</option>
+        </select>
+
+        <select id="statusType">
+            <option value="Infiltrating">Infiltrating</option>
+            <option value="Override Successful">Override Successful</option>
+            <option value="Data Extracted">Data Extracted</option>
+            <option value="System Purge">System Purge</option>
+        </select>
+
+        <button onclick="sendCommand()">Transmit Payload</button>
+    </div>
+
+    <h3>📜 Active Hive-Mind Logs</h3>
+    <div id="terminal-log">Accessing database streams...</div>
+
+    <script>
+        const logContainer = document.getElementById('terminal-log');
+        
+        // Use your live Render URL here
+        const API_URL = 'https://mastermind-api-ug0e.onrender.com/api';
+
+        // 📥 READ: Fetch logs from MongoDB (Syllabus Page 8: AJAX)
+        async function fetchLogs() {
+            try {
+                const response = await fetch(`${API_URL}/logs`);
+                const data = await response.json();
+                
+                logContainer.innerHTML = ''; 
+                
+                data.forEach(log => {
+                    const div = document.createElement('div');
+                    div.className = 'log-entry';
+                    div.innerHTML = `
+                        [<span class="key">ID</span>]: <span class="val">${log.execution_id}</span> | 
+                        [<span class="key">NODE</span>]: <span class="val">${log.origin_source}</span> | 
+                        [<span class="key">STATUS</span>]: <span class="status">${log.payload_status}</span>
+                    `;
+                    logContainer.appendChild(div);
+                });
+            } catch (error) {
+                logContainer.innerHTML = '❌ ERROR: Failed to breach database.';
+            }
+        }
+
+        // 📤 WRITE: Send new log to API (Syllabus Page 9: Sending data to server)
+        async function sendCommand() {
+            const execution_id = document.getElementById('execId').value;
+            const origin_source = document.getElementById('sourceNode').value;
+            const payload_status = document.getElementById('statusType').value;
+
+            if (!execution_id) {
+                alert("Please enter an Execution ID before transmitting.");
+                return;
+            }
+
+            const payload = { execution_id, origin_source, payload_status };
+
+            try {
+                const response = await fetch(`${API_URL}/trigger`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'x-api-key': 'ZOLA_RESTORE_ORDER_99' // 🛡️ Security Header we added earlier!
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                if (response.ok) {
+                    alert("Payload securely logged to MongoDB Atlas!");
+                    document.getElementById('execId').value = ''; // Reset input
+                    fetchLogs(); // Refresh the list automatically
+                } else {
+                    alert("Transmission Denied. Check API Key or Server Status.");
+                }
+            } catch (error) {
+                alert("Failed to reach server.");
+            }
+        }
+
+        // Run fetch on load
+        fetchLogs();
+    </script>
+</body>
+</html>
